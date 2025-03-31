@@ -75,56 +75,8 @@ fun RallyApp() {
                     currentScreen = currentScreen
                 )
             }) { innerPadding ->
-            NavHost(
-                navController = navController,
-                startDestination = Overview.route,
-                modifier = Modifier.padding(innerPadding),
-            ) {
-                composable(route = Overview.route) {
-                    OverviewScreen(
-                        onClickSeeAllAccounts = { navController.navigateSingleTopTo(Accounts.route) },
-                        onClickSeeAllBills = { navController.navigateSingleTopTo(Bills.route) },
-                        onAccountClick = { accountType ->
-                            navController.navigateToSingleAccount(accountType)
-                        }
-                    )
-                }
-                composable(route = Bills.route) {
-                    BillsScreen()
-                }
-                composable(route = Accounts.route) {
-                    AccountsScreen(onAccountClick = { accountType ->
-                        navController.navigateToSingleAccount(accountType)
-                    }
-                    )
-                }
-
-                composable(
-                    route = SingleAccount.routeWithArg,
-                    arguments = SingleAccount.arguments,
-                    deepLinks = SingleAccount.deepLinks
-                ) { navBackStackEntry ->
-                    val accountType =
-                        navBackStackEntry.arguments?.getString(SingleAccount.accountTypeArg)
-                    SingleAccountScreen(accountType)
-                }
-            }
+            RallyNavHost(navController = navController, Modifier.padding(innerPadding))
         }
-    }
-}
 
-fun NavHostController.navigateSingleTopTo(route: String) {
-    this.navigate(route) {
-        popUpTo(
-            this@navigateSingleTopTo.graph.findStartDestination().id
-        ) {
-            saveState = true
-        }
-        restoreState = true
-        launchSingleTop = true
     }
-}
-
-fun NavHostController.navigateToSingleAccount(accountType: String) {
-    this.navigateSingleTopTo("${SingleAccount.route}/$accountType")
 }
